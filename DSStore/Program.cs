@@ -1,9 +1,35 @@
+using DSStore.Data;
+using DSStore.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+//Serviço de Conexão com o Banco de Dados
+string conexao = builder.Configuration.GetConnectionString("DSStoreConn");
+builder.Services.AddDbContext<AppDbContext>(
+    options => options.UseMySQL(conexao)
+);
+
+// Serviços de Gestão de Usuários - Identity
+builder.Services.AddIdentity<Usuario, IdentityRole>(
+    options => options.SignIn.RequireConfirmedEmail= false
+).AddEntityFrameworkStores<AppDbContext>()
+.AddDefaultTokenProviders();
+
 var app = builder.Build();
+
+//Garantir que o banco exixta ao executar o projeto
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider
+        .GetRequiredService<AppDbContext>();
+    await dbContext.Database.EnsureCreatedAsync();
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
