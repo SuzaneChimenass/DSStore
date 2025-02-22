@@ -18,3 +18,16 @@ Criar a camada de dados(criar as classes na models)
     Produto
     ProdutoFoto
     Usuario
+
+
+Criar um comando na pasta Data
+
+Configurar a ConnectionString no Appsettings.json
+
+Configurar os serviços de Contexto e Identity no Program.cs
+
+Executar o Xampp e MySql 
+
+Abrir o terminal: ctrl + ' 
+    cd DSStore
+    dotnet watch run
