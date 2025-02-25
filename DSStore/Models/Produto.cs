@@ -19,7 +19,6 @@ public class Produto
     public string Nome { get; set; }
 
     [StringLength(1000, ErrorMessage ="A descrição deve possuir no máximo 1000 caracteres.")]
-
     [Display(Name ="Descrição",Prompt ="Descrição")]
     public string Descricao { get; set; }
 
@@ -39,4 +38,8 @@ public class Produto
     [Required(ErrorMessage ="Por favor, informe o valor de venda")]
     [Column(TypeName ="decimal(10,2)")]
     public decimal ValorVenda { get; set; }
+
+    public bool Destaque { get; set; } = false;
+    public List<ProdutoFoto> Fotos { get; set; }
+
 }
