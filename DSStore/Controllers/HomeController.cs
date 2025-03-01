@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using DSStore.Models;
 using DSStore.Data;
 using Microsoft.EntityFrameworkCore;
-
+using DSStore.ViewModels;
 namespace DSStore.Controllers;
 
 public class HomeController : Controller
@@ -25,7 +25,28 @@ public class HomeController : Controller
             .ToList();
         return View(produtos);
     }
+    public IActionResult Produto(int id)
+    {
+        Produto produto = _db.Produtos
+        .Where(p=> p.Id == id)
+        .Include(p => p.Categoria)
+        .Include(p => p.Fotos)
+        .SingleOrDefault();
 
+        ProdutoVM produtoVM =new()
+        {
+            Produto = produto
+        };
+
+        produtoVM.Produtos = _db.Produtos
+            .Where(p => p.CategoriaId == produto.CategoriaId
+            && p.Id != produto.Id)
+            .Take(4)
+            .Include(p => p.Fotos)
+            .ToList();
+
+        return View(produtoVM);
+    }
     public IActionResult Privacy()
     {
         return View();
