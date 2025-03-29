@@ -1,6 +1,9 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DSStore.Controllers;
+
+[Authorize(Roles = "Administrador")]
 
 public class AdminController : Controller
 {
