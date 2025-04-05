@@ -11,7 +11,7 @@ namespace DSStore.Controllers;
 public class AccountController : Controller
 {
     private readonly ILogger<AccountController> _logger;
-    private readonly SignInManager<Usuario> _singInManager;
+    private readonly SignInManager<Usuario> _signInManager;
     private readonly UserManager<Usuario> _userManager;
     private readonly IWebHostEnvironment _host;
 
@@ -24,7 +24,7 @@ public class AccountController : Controller
         )
     {
         _logger = logger;
-        _singInManager = singInManager;
+        _signInManager = singInManager;
         _userManager = userManager;
         _host = host;
     }
@@ -37,19 +37,6 @@ public class AccountController : Controller
             UrlRetorno = returnUrl ?? Url.Content("~/")
         };
         return View(login);
-    }
-
-    public bool IsValidEmail(string email)
-    {
-        try
-        {
-            MailAddress m = new(email);
-            return true;
-        }
-        catch (FormatException)
-        {
-            return false;
-        }
     }
 
     [HttpPost]
@@ -66,13 +53,13 @@ public class AccountController : Controller
                     userName = user.UserName;
             }
 
-            var result = await _singInManager.PasswordSignInAsync(
+            var result = await _signInManager.PasswordSignInAsync(
                 userName, login.Senha, login.Lembrar, lockoutOnFailure: true
             );
 
             if (result.Succeeded) {
                 _logger.LogInformation($"Usuário {login.Email} acessou o sistema");
-                return LocalRedirected(login.UrlRetorno);
+                return LocalRedirect(login.UrlRetorno);
             }
 
             if (result.IsLockedOut) {
@@ -84,10 +71,31 @@ public class AccountController : Controller
                 _logger.LogWarning($"Usuário {login.Email} não confirmou sua conta");
                 ModelState.AddModelError(string.Empty, "Sua conta não está confirmada, verifique seu email!!!");
             }
-
             else
                 ModelState.AddModelError(string.Empty, "Usuário e/ou Senha Inválidos!!!");
         }
         return View(login);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Logout()
+    {
+        _logger.LogInformation($"Usuário {ClaimTypes.Email} fez logoff");
+        await _signInManager.SignOutAsync();
+        return RedirectToAction("Index", "Home");
+    }
+
+    public bool IsValidEmail(string email)
+    {
+        try
+        {
+            MailAddress m = new(email);
+            return true;
+        }
+        catch (FormatException)
+        {
+            return false;
+        }
     }
 }
