@@ -8,6 +8,11 @@ namespace DSStore.ViewModels
         [Display(Name = "Nome Completo", Prompt ="Informe seu Nome Completo")]
         [Required(ErrorMessage = "Por favor, informe seu Nome")]
         [StringLength(60, ErrorMessage = "O Nome deve possuir no máximo 60 caracteres")]
+        public string Nome {get; set;}
+
+        [DataType(DataType.Date)]
+        [Display(Name = "Data de Nascimento", Prompt ="Informe sua Data de Nascimento")]
+        [Required(ErrorMessage = "Por favor, informe sua Data de Nasciimento")]
         public DateTime? DataNascimento {get; set;} = null;
         
         [Display(Prompt = "Informe seu Email")]
