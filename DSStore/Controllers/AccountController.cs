@@ -93,7 +93,7 @@ public class AccountController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Registro (RegristroVM registro)
+    public async Task<IActionResult> Registro (RegistroVM registro)
     {
         if (ModelState.IsValid)
         { 
@@ -109,18 +109,18 @@ public class AccountController : Controller
 
             if(result.Succeeded)
             {
-                _logger.LogInformation($"Novo usuário registrado com o email {registro.email}.");
+                _logger.LogInformation($"Novo usuário registrado com o email {registro.Email}.");
 
                 await _userManager.AddToRoleAsync(usuario, "Cliente");
                 
                 if (registro.Foto !=null)
                 {
                     string nomeArquivo = usuario.Id + Path.GetExtension(registro.Foto.FileName);
-                    string caminho = Path.Combine(_host.webRootPath, @"img\usuarios");
+                    string caminho = Path.Combine(_host.WebRootPath, @"img\usuarios");
                     string novoArquivo = Path.Combine(caminho, nomeArquivo);
                     using(var stream = new FileStream(novoArquivo, FileMode.Create))
                     {
-                        registro.Foto.Copy(stream);
+                        registro.Foto.CopyTo(stream);
                     }
                     usuario.Foto = @"\img\usuarios\" +nomeArquivo;
                     await _db.SaveChangesAsync();
@@ -129,16 +129,20 @@ public class AccountController : Controller
                 return RedirectToAction(nameof(Login));
             }
             foreach (var error in result.Errors)
-                ModelState.AddModelError(string.Empty, TranslateIdentityErrors.TranslateIdentityErrors(error.Code));
+                ModelState.AddModelError(string.Empty, TranslateIdentityErrors.TranslateErrorMessage(error.Code));
         }
         return View(registro);
+    }
+
+    public IActionResult AccessDenied(){
+        return View();
     }
 
     [HttpGet]
     public IActionResult Registro()
     {
-        RegistroVM register = new();
-        return View(register);
+        RegistroVM registro = new();
+        return View(registro);
     }
 
     public bool IsValidEmail(string email)
