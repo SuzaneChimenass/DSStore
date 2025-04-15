@@ -1,0 +1,22 @@
+@using Microssoft.AspNetCore.Identity
+@inject DSStore.Data.AppDbContext _db
+@inject SignInManager<Usuario> UserManager
+@{
+    var user = UserManager.GetUserName(User);
+    var usuario = _db.Usuarios.FirstOrDefault(u => u. UserName == user);
+}
+
+@if (!SignInManagerIsSignedIn(User))
+{
+    <a asp-action="Login" asp-controler="Account" class=" me-2">
+        <img src="~/img/isuarios/no-photo.png" width="40" height="40" class="objetc-fit-cover rounded-5">
+    </a>
+}
+else 
+{
+    <div class=" nav-item dropdown me-2">
+        <button class=" nav-link text-white dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            
+        </button>
+    </div>
+}
